@@ -2,11 +2,11 @@
 
 const express               =   require('express');
 const router                =   express.Router();
-const {GifExchangeController} = require('../controller/gifExchangeController');
+const {GiftExchangeController} = require('../controller/gifExchangeController');
 
 
-router.post('/new-exchange',GifExchangeController.create_exchange);
-
+router.post('/new-exchange',GiftExchangeController.create_exchange);
+router.post('/new-idea',GiftExchangeController.new_gift_idea);
 
 
 module.exports = router;

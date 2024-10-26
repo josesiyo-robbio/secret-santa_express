@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://admin:sasha88@localhost:27017/secret-santa?authSource=admin';
+const uri = 'mongodb://default:sasha88@localhost:27017/secret-santa?authSource=admin';
 
 
 const connectDB = async () => {

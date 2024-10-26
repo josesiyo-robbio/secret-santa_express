@@ -1,9 +1,11 @@
 
-const moduleEXCHANGEGIF = require('../model/gifExchange');
+
+
+const moduleEXCHANGEGIF = require('../model/giftExchange');
 
 
 
-const GifExchangeController =
+const GiftExchangeController =
 {
     create_exchange : async(req,res) =>
     {
@@ -17,9 +19,31 @@ const GifExchangeController =
             }
 
             const createNew = await moduleEXCHANGEGIF.insert_new_secret_santa(name, numberParticipants, minBudget, maxBudget, participants);
+            console.log('XXXX',createNew);
             if(createNew)
             {
                 res.status(200).json({createNew});
+            }
+        }
+        catch (error) 
+        {
+            console.log(error);
+            res.status(500).json({ message: 'Error', error: { message: error.message } });
+        }
+    },
+
+
+
+    new_gift_idea : async(req,res) =>
+    {
+        try
+        {
+            const {exchangeId,description,price,url,participantEmail} = req.body;
+            const newIdeaGift = await moduleEXCHANGEGIF.insert_new_idea_gift(exchangeId,description,price,url,participantEmail);
+
+            if(newIdeaGift)
+            {
+                res.status(200).json({newIdeaGift});
             }
         }
         catch (error) 
@@ -33,4 +57,4 @@ const GifExchangeController =
 
 
 
-module.exports =  { GifExchangeController }
+module.exports =  { GiftExchangeController }
