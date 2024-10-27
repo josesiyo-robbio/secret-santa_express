@@ -17,6 +17,12 @@ const exchangeSchema = new mongoose.Schema({
   assignments: [{ sender: String, recipient: String }],
   active: { type: Boolean, default: true }, 
   validateGifts : {type: Number, default : 0},
+  returnedGifts: [{ // Nuevo array para los regalos devueltos
+    _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // ID único del regalo devuelto
+    originalRecipient: { type: String, required: true }, // Email del destinatario original del regalo
+    description: { type: String, required: true }, // Descripción del regalo
+    // Puedes agregar más campos si lo necesitas, como la fecha de devolución o el motivo
+  }],
   giftIdeas: [{ // Nueva colección anidada para las ideas de regalo
     _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, 
     description: { type: String, required: true },
@@ -169,6 +175,74 @@ const GiftExchange =
       throw new Error('Error approving gift idea');
     }
   },
+
+
+  update_return_gift: async (exchangeId, email, idGiftReturned, idGiftTaken) => {
+    try {
+      // Buscar el intercambio
+      const exchange = await Exchange.findOne({ _id: exchangeId });
+      if (!exchange) {
+        throw new Error('Exchange Not Found');
+      }
+  
+      // Validar el participante por email
+      const participant = exchange.participants.find(member => member.email === email);
+      if (!participant) {
+        throw new Error('Participant Not Found in this Exchange');
+      }
+  
+      // Buscar el regalo que se va a devolver en giftIdeas
+      const returnedGiftIndex = exchange.giftIdeas.findIndex(gift => gift._id.toString() === idGiftReturned);
+      if (returnedGiftIndex === -1) {
+        throw new Error('Returned Gift Not Found in gift ideas');
+      }
+  
+      // Obtener el regalo devuelto
+      const returnedGift = exchange.giftIdeas[returnedGiftIndex];
+  
+      // Si no hay regalos en la lista devuelta, solo agrega el regalo devuelto
+      if (exchange.returnedGifts.length === 0) {
+        exchange.returnedGifts.push({
+          _id: returnedGift._id, // ID del regalo que se deja
+          originalRecipient: email, // Email del que devuelve el regalo
+          description: returnedGift.description,
+        });
+        // Guardar los cambios y devolver el mensaje
+        await exchange.save();
+        return { message: 'No se rtu regalo, se dejó en la mesa. Espera a tomar otro.' };
+      } else {
+        // Verificar si el regalo que se va a tomar existe en los regalos devueltos
+        const takenGiftIndex = exchange.returnedGifts.findIndex(gift => gift._id.toString() === idGiftTaken);
+        if (takenGiftIndex === -1) {
+          throw new Error('Taken Gift Not Found in returned gifts');
+        }
+  
+        // Obtener el regalo tomado
+        const takenGift = exchange.returnedGifts[takenGiftIndex];
+  
+        // Eliminar el regalo tomado de la lista de regalos devueltos
+        exchange.returnedGifts.splice(takenGiftIndex, 1); // Eliminar el regalo tomado
+  
+        // Agregar el regalo devuelto a la lista de regalos devueltos
+        exchange.returnedGifts.push({
+          _id: returnedGift._id, // ID del regalo que se deja
+          originalRecipient: email, // Email del que devuelve el regalo
+          description: returnedGift.description,
+        });
+      }
+  
+      // Guardar los cambios
+      await exchange.save();
+      return { message: 'Gift returned successfully' };
+  
+    } catch (error) {
+      console.error('Error updating return gift:', error);
+      throw new Error('Error updating return gift');
+    }
+  }
+  
+  
+  
   
 
 }

@@ -73,7 +73,25 @@ const GiftExchangeController =
             console.log(error);
             res.status(500).json({ message: 'Error', error: { message: error.message } });
         }
+    },
 
+    return_gift_sad : async(req,res) =>
+    {
+        try
+        {
+            const {exchangeId, email, idGiftReturned, idGiftTaken} = req.body;
+
+            const returnsGift = await moduleEXCHANGEGIF.update_return_gift(exchangeId, email, idGiftReturned, idGiftTaken);
+            if(returnsGift)
+            {
+                res.status(200).json({returnsGift});
+            }
+        }
+        catch (error) 
+        {
+            console.log(error);
+            res.status(500).json({ message: 'Error', error: { message: error.message } });
+        }
     }
 
 
