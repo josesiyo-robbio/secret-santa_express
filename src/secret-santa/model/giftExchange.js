@@ -131,7 +131,44 @@ const GiftExchange =
       console.error('Error inserting new idea:', error);
       throw new Error('Error creating new idea');
     }
-  }
+  },
+
+
+
+  update_gift_idea_aprobe : async(exchangeId,email) =>
+  {
+    try
+    {
+      //search exchange by ID
+      const exchange = await Exchange.findOne({_id : exchangeId});
+
+      if(!exchange)
+      {
+        throw new Error('Exchange Not Found');
+      }
+
+      //find the idea from participant by email
+      const giftIdeaIndex = exchange.giftIdeas.findIndex( idea => idea.participant.email === email);
+      if(giftIdeaIndex === -1)
+      {
+        throw new Error('Gift Idea Not Found for this Participant');
+      }
+
+      //acept gift idea
+      exchange.giftIdeas[giftIdeaIndex].approved = true;
+
+      //save changes
+      await exchange.save();
+
+      return exchange.giftIdeas[giftIdeaIndex];
+
+    }
+    catch (error) 
+    {
+      console.error('Error approving gift idea:', error);
+      throw new Error('Error approving gift idea');
+    }
+  },
   
 
 }

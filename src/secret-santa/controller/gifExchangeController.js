@@ -19,7 +19,7 @@ const GiftExchangeController =
             }
 
             const createNew = await moduleEXCHANGEGIF.insert_new_secret_santa(name, numberParticipants, minBudget, maxBudget, participants);
-            
+
             if(createNew)
             {
                 res.status(200).json({createNew});
@@ -51,7 +51,31 @@ const GiftExchangeController =
             console.log(error);
             res.status(500).json({ message: 'Error', error: { message: error.message } });
         }
+    },
+
+
+    aprove_idea : async(req,res) =>
+    {
+        try
+        {        
+            const {exchangeId,email} =req.body;
+
+            const aproveIdea = await moduleEXCHANGEGIF.update_gift_idea_aprobe(exchangeId,email);
+
+            if(aproveIdea)
+            {
+                res.status(200).json({aproveIdea});
+            }
+        }
+    
+        catch (error) 
+        {
+            console.log(error);
+            res.status(500).json({ message: 'Error', error: { message: error.message } });
+        }
+
     }
+
 
 }
 
