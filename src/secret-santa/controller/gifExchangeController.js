@@ -2,16 +2,16 @@
 
 
 const moduleEXCHANGEGIF = require('../model/giftExchange');
-const nodemailer = require("nodemailer");
 const moduleVALIDATORAPI    = require('../middleware/validatorApi');
+const nodemailer = require("nodemailer");
 
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
   auth: {
-    user: "conor.weber85@ethereal.email", // Usuario generado de Ethereal
-    pass: "j4NpEz9NqGPESNPY8P" // Contraseña generada de Ethereal
+    user: "conor.weber85@ethereal.email", 
+    pass: "j4NpEz9NqGPESNPY8P" 
   }
 });
 
@@ -40,8 +40,8 @@ const GiftExchangeController =
 
             const createNew = await moduleEXCHANGEGIF.insert_new_secret_santa(name, numberParticipants, minBudget, maxBudget, participants);
 
-            if (createNew) {
-                // Enviar correos electrónicos a los participantes
+            if (createNew) 
+            {
                 participants.forEach(participant => {
                     const mailOptions = {
                         from: '"Secret Santa" <santa@ethereal.email>',
@@ -52,14 +52,16 @@ const GiftExchangeController =
                     };
 
                     transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
+                        if (error) 
+                        {
                             console.log(`Error sending email to ${participant.email}:`, error);
-                        } else {
+                        } 
+                        else 
+                        {
                             console.log(`Email sent to ${participant.email}:`, info.response);
                         }
                     });
                 });
-
                 res.status(200).json({ createNew });
             }
         }
@@ -81,10 +83,10 @@ const GiftExchangeController =
 
             const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
             if (!validation.success) 
-                {
-                    res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                    return;
-                }
+            {
+                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
+                return;
+            }
 
             const newIdeaGift = await moduleEXCHANGEGIF.insert_new_idea_gift(exchangeId,description,price,url,participantEmail);
 
@@ -111,10 +113,10 @@ const GiftExchangeController =
 
             const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
             if (!validation.success) 
-                {
-                    res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                    return; 
-                }
+            {
+                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
+                return; 
+            }
 
             const aproveIdea = await moduleEXCHANGEGIF.update_gift_idea_aprobe(exchangeId,email);
 
@@ -142,12 +144,10 @@ const GiftExchangeController =
 
             const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
             if (!validation.success) 
-                {
-                    res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                    return; // Detener la ejecución si hay campos faltantes
-                }
-
-
+            {
+                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
+                return; // Detener la ejecución si hay campos faltantes
+            }
 
             const returnsGift = await moduleEXCHANGEGIF.update_return_gift(exchangeId, email, idGiftReturned, idGiftTaken);
             if(returnsGift)
