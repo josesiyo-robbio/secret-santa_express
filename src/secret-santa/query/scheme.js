@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 
 const exchangeSchema = new mongoose.Schema({
-    _id: { type: String, default: uuidv4 }, // Usar UUID como _id
+    _id: { type: String, default: uuidv4 },
     name: { type: String, required: true },
     numberParticipants: { type: Number, required: true },
     minBudget: { type: Number, required: true },
@@ -17,12 +17,11 @@ const exchangeSchema = new mongoose.Schema({
     active: { type: Boolean, default: true },
     validateGifts: { type: Number, default: 0 },
     returnedGifts: [{ // Nuevo array para los regalos devueltos
-        _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // ID único del regalo devuelto
-        originalRecipient: { type: String, required: true }, // Email del destinatario original del regalo
-        description: { type: String, required: true }, // Descripción del regalo
-        // Puedes agregar más campos si lo necesitas, como la fecha de devolución o el motivo
+        _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+        originalRecipient: { type: String, required: true },
+        description: { type: String, required: true },
     }],
-    giftIdeas: [{ // Nueva colección anidada para las ideas de regalo
+    giftIdeas: [{
         _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
         description: { type: String, required: true },
         price: { type: Number, required: true },
