@@ -19,7 +19,7 @@ const GiftExchangeController =
             }
 
             const createNew = await moduleEXCHANGEGIF.insert_new_secret_santa(name, numberParticipants, minBudget, maxBudget, participants);
-            console.log('XXXX',createNew);
+            
             if(createNew)
             {
                 res.status(200).json({createNew});

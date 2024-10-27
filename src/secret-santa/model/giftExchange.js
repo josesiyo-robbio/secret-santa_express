@@ -64,54 +64,76 @@ const GiftExchange =
   },
 
 
-
-  insert_new_idea_gift : async(exchangeId,description,price,url,participantEmail) =>
-  {
-    try
+  insert_new_idea_gift: async (exchangeId, description, price, url, participantEmail) => 
     {
-      //search exchange by name
-      const exchange = await Exchange.findOne({ _id : exchangeId});
-
-      if(!exchange)
+    try 
+    {
+      const exchange = await Exchange.findOne({ _id: exchangeId });
+  
+      if (!exchange) 
       {
         throw new Error('Exchange Not Found');
       }
 
-      //search participant by email
-      const participant = await exchange.participants.find( member => member.email === participantEmail);
-      if(!participant)
+      const participant = exchange.participants.find(member => member.email === participantEmail);
+      if (!participant) 
       {
         throw new Error('Participant Not Found in this Exchange');
       }
-
-      //create a new gift idea
-      const newGiftIdea = {
-        description,
-        price,
-        url,
-        participant : {
-          name : participant.name,
-          email : participant.email
+  
+      let newGiftIdea;
+  
+      const existingGiftIdeaIndex = exchange.giftIdeas.findIndex(idea =>
+        idea.participant.email === participantEmail
+      );
+  
+      if (existingGiftIdeaIndex !== -1) 
+      {
+        const existingGiftIdea = exchange.giftIdeas[existingGiftIdeaIndex];
+        if (existingGiftIdea.approved) 
+        {
+          throw new Error('El participante ya tiene una idea de regalo aprobada en este intercambio');
+        } 
+        else 
+        {
+          newGiftIdea = {
+            description,
+            price,
+            url,
+            participant: {
+              name: participant.name,
+              email: participant.email
+            }
+          };
+          exchange.giftIdeas[existingGiftIdeaIndex] = newGiftIdea; // Actualizar la existente
         }
+      } 
+      else 
+      {
+        newGiftIdea = {
+          description,
+          price,
+          url,
+          participant: {
+            name: participant.name,
+            email: participant.email
+          }
+        };
+        exchange.giftIdeas.push(newGiftIdea);
       }
-
-      // add a new idea in the exchange
-      exchange.giftIdeas.push(newGiftIdea);
-
-      //save the updated Exchange
+  
       await exchange.save();
 
-      console.log('sdasdasdasdasd',newGiftIdea);
-      
-
       return newGiftIdea;
-    }
+    } 
     catch (error) 
     {
       console.error('Error inserting new idea:', error);
       throw new Error('Error creating new idea');
     }
   }
+  
+
 }
 
 
