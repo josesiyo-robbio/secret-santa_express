@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 
 
-
 const exchangeSchema = new mongoose.Schema({
   _id: { type: String, default: uuidv4 }, // Usar UUID como _id
   name: { type: String, required: true },
