@@ -1,3 +1,6 @@
+
+
+
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -7,8 +10,9 @@ const connectDB = require('./src/db/mongoDb');
 //------------------ROUTES IMPORTS---------------------------------------------------|
 const routesGifs = require('./src/secret-santa/routes/gifExchangeRoutes');
 
-//---------------------Cors Config & Other Stuff-------------------------------------|
 
+
+//---------------------Cors Config & Other Stuff-------------------------------------|
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -16,10 +20,10 @@ const corsOptions = { origin: 'http://localhost:8080' };
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 //---------------------Cors Config & Other Stuff-------------------------------------|
 
-// Conectar a la base de datos y luego iniciar el servidor
+
+
 connectDB().then(() => {
     //-----------APIs SECTION-------------------------------------------------------------|
     app.use('/api', routesGifs);
@@ -30,11 +34,8 @@ connectDB().then(() => {
         res.status(500).json({ message: 'Internal Server Error' });
     });
 
-    // Se inicia el servidor
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
-}).catch(err => {
+    app.listen(PORT, () => { console.log(`Server is running on port ${PORT}`); });
+    }).catch(err => {
     console.error('Failed to connect to MongoDB:', err);
-    process.exit(1); // Termina el proceso si la conexión falla
+    process.exit(1); 
 });

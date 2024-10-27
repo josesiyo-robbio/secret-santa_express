@@ -7,11 +7,11 @@ const nodemailer = require("nodemailer");
 
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
+  host: process.env.HOST_MAIL,
   port: 587,
   auth: {
-    user: "conor.weber85@ethereal.email", 
-    pass: "j4NpEz9NqGPESNPY8P" 
+    user: process.env.MAIL_ACCOUNT, 
+    pass: process.env.MAIL_PASSWORD
   }
 });
 
@@ -125,7 +125,6 @@ const GiftExchangeController =
                 res.status(200).json({aproveIdea});
             }
         }
-    
         catch (error) 
         {
             console.log(error);
