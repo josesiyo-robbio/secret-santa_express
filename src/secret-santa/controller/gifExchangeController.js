@@ -106,31 +106,32 @@ const GiftExchangeController =
 
 
 
-    aprove_idea : async(req,res) =>
+    aprove_idea: async (req, res) => 
     {
-        try
+        const { exchangeId, email } = req.body;
+
+        const requiredFields = ['exchangeId', 'email'];
+        const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
+        if (!validation.success) 
         {
-            const requiredFields = ['exchangeId','email'];
-            const {exchangeId,email} =req.body;
-
-            const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
-            if (!validation.success) 
-            {
-                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                return; 
-            }
-
-            const aproveIdea = await moduleEXCHANGEGIF.update_gift_idea_aprobe(exchangeId,email);
-
-            if(aproveIdea)
-            {
-                res.status(200).json({aproveIdea});
-            }
+            return res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
         }
+
+        try 
+        {
+            const aproveIdea = await moduleEXCHANGEGIF.update_gift_idea_aprobe(exchangeId, email);
+    
+            if (!aproveIdea) 
+            {
+                return res.status(404).json({ message: 'Gift idea not found or could not be approved.' });
+            }
+    
+            res.status(200).json({ message: 'Gift idea approved successfully.', aproveIdea });
+        } 
         catch (error) 
         {
-            console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            console.error('Error approving gift idea:', error);
+            res.status(500).json({ message: 'An error occurred while approving the gift idea.', error: { message: error.message } });
         }
     },
 
@@ -138,18 +139,18 @@ const GiftExchangeController =
 
     return_gift_sad : async(req,res) =>
     {
+        const {exchangeId, email, idGiftReturned, idGiftTaken} = req.body;
+
+        const requiredFields = ['exchangeId', 'email', 'idGiftReturned', 'idGiftTaken'];
+        const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
+        if (!validation.success) 
+        {
+            res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
+            return; 
+        }
+
         try
         {
-            const requiredFields = ['exchangeId', 'email', 'idGiftReturned', 'idGiftTaken'];
-            const {exchangeId, email, idGiftReturned, idGiftTaken} = req.body;
-
-            const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
-            if (!validation.success) 
-            {
-                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                return; // Detener la ejecución si hay campos faltantes
-            }
-
             const returnsGift = await moduleEXCHANGEGIF.update_return_gift(exchangeId, email, idGiftReturned, idGiftTaken);
             if(returnsGift)
             {
@@ -159,7 +160,7 @@ const GiftExchangeController =
         catch (error) 
         {
             console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            res.status(500).json({ message: 'An error occurred while returning the gift.', error: { message: error.message } });
         }
     }
 
