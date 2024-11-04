@@ -1,18 +1,23 @@
 
 
 
-const moduleEXCHANGEGIF = require('../model/giftExchange');
-const moduleVALIDATORAPI    = require('../middleware/validatorApi');
-const nodemailer = require("nodemailer");
+const moduleEXCHANGEGIF     =   require('../model/giftExchange');
+const moduleVALIDATORAPI    =   require('../middleware/validatorApi');
+const nodemailer            =   require("nodemailer");
 
 
+
+/*
+    Since only one email is sent throughout the entire project process, a separate service isn't created for this.
+    Increasing the project’s modularity for such a minor task is unnecessary.
+*/
 const transporter = nodemailer.createTransport({
-  host: process.env.HOST_MAIL,
-  port: 587,
-  auth: {
-    user: process.env.MAIL_ACCOUNT, 
-    pass: process.env.MAIL_PASSWORD
-  }
+    host    : process.env.HOST_MAIL,
+    port    : 587,
+    auth    : {
+    user    : process.env.MAIL_ACCOUNT, 
+    pass    : process.env.MAIL_PASSWORD
+    }
 });
 
 

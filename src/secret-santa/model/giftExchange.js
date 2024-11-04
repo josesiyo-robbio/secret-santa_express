@@ -13,7 +13,6 @@ const GiftExchange =
     {
       const exchangeId = uuidv4();
 
-      //generate assignments
       const assignments = generateAssignments(participants);
 
       const newExchange = new Exchange({
