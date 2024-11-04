@@ -74,31 +74,33 @@ const GiftExchangeController =
 
 
 
-    new_gift_idea : async(req,res) =>
+    new_gift_idea: async (req, res) => 
     {
-        try
+        const { exchangeId, description, price, url, participantEmail } = req.body;
+        
+        const requiredFields = ['exchangeId', 'description', 'price', 'url', 'participantEmail'];
+        const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
+        if (!validation.success) 
         {
-            const requiredFields = ['exchangeId','description','price','url','participantEmail'];
-            const {exchangeId,description,price,url,participantEmail} = req.body;
-
-            const validation = moduleVALIDATORAPI.validateRequiredFields(req.body, requiredFields);
-            if (!validation.success) 
-            {
-                res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
-                return;
-            }
-
-            const newIdeaGift = await moduleEXCHANGEGIF.insert_new_idea_gift(exchangeId,description,price,url,participantEmail);
-
-            if(newIdeaGift)
-            {
-                res.status(200).json({newIdeaGift});
-            }
+            return res.status(400).json({ message: validation.message,missingFields: validation.missingFields });
         }
+    
+        try 
+        {
+            const newIdeaGift = await moduleEXCHANGEGIF.insert_new_idea_gift(exchangeId, description, price, url, participantEmail);
+    
+            if (!newIdeaGift) 
+            {
+                return res.status(404).json({ message: 'Gift idea could not be created. Please check your input.', });
+            }
+
+            res.status(201).json({ newIdeaGift });
+    
+        } 
         catch (error) 
         {
-            console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            console.error('Error creating gift idea:', error);
+            res.status(500).json({ message: 'An error occurred while creating the gift idea.', error: { message: error.message } });
         }
     },
 
