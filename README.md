@@ -1,5 +1,5 @@
 
-# Gift Exchange API
+# Gift Exchange
 
 ## Overview
 A RESTful API for managing a Secret Santa gift exchange. The API allows users to create exchanges, submit gift ideas, approve gift ideas, and handle the return of gifts. It also sends email notifications to participants upon exchange creation.
